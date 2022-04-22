@@ -3,6 +3,7 @@ import pygame
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         self.life = 50
+        self.score = 0
         self.image = pygame.image.load("../assets/vaisseau.png")
         self.rect = self.image.get_rect()
         self.rect.x = 290

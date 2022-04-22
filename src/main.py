@@ -12,6 +12,10 @@ HEIGHT = 1080
 STAT = "menu"
 clock = pygame.time.Clock()
 
+#Color :
+WHITE = (255, 255, 255)
+GREEN = (51, 255, 51)
+
 #Variables :
 #Menu
 menu = pygame.image.load("../assets/menu.png")
@@ -23,6 +27,11 @@ choice = "game"
 #Game
 background = pygame.image.load("../assets/background.jpg")
 background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+myfont = pygame.font.SysFont("Arial", 30)
+score_text = str(0)
+score_display = myfont.render(score_text, 1, GREEN)
+text_score = myfont.render("SCORE", 1, WHITE)
+text_lives = myfont.render("LIVES", 1, WHITE)
 
 #Constantes classes:
 player = Player()
@@ -78,6 +87,9 @@ while running:
             player.move_right()
         if pressed[pygame.K_q]:
             player.move_left()
+        score_text = str(player.score)
+        score_display = myfont.render(score_text, 1, GREEN)
+
 
     # Affichage
     screen.window.blit(screen.window, (0, 0))
@@ -87,6 +99,9 @@ while running:
     if STAT == "game":
         screen.window.blit(background, (0, 0))
         screen.window.blit(player.image, player.rect)
+        screen.window.blit(score_display, (125, 5))
+        screen.window.blit(text_score, (5, 5))
+        screen.window.blit(text_lives, (400, 5))
     clock.tick(60)
     pygame.display.flip()
 
