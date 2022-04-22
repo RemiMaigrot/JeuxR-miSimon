@@ -45,9 +45,23 @@ while running:
                 running = False
             if STAT == "menu":
                 if event.key == pygame.K_DOWN:
-                    fleche_rect.y = 485
-                    choice = "exit"
+                    if choice == "game":
+                        fleche_rect.y = 485
+                        choice = "exit"
+                        break
+                    if choice == "exit":
+                        fleche_rect.y = 445
+                        choice = "game"
+                        break
                 if event.key == pygame.K_UP:
+                    if choice == "game":
+                        fleche_rect.y = 485
+                        choice = "exit"
+                        break
+                    if choice == "exit":
+                        fleche_rect.y = 445
+                        choice = "game"
+                        break
                     fleche_rect.y = 445
                     choice = "game"
                 if event.key == pygame.K_RETURN:
