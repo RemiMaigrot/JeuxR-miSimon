@@ -9,6 +9,10 @@ class Balle(pygame.sprite.Sprite):
         self.rect.y = 510
         self.speed = 7
         self.move = False
+        self.direction = "UP"
 
     def move_up(self):
         self.rect.y -= self.speed
+
+    def move_down(self):
+        self.rect.y += self.speed

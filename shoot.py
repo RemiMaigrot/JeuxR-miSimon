@@ -11,9 +11,7 @@ class Shoot(pygame.sprite.Sprite):
         self.can_shoot = True
 
     def move_right(self):
-        if self.rect.x <= 756:
-            self.rect.x += self.speed
+        self.rect.x += self.speed
 
     def move_left(self):
-        if self.rect.x >= 0:
-            self.rect.x -= self.speed
+        self.rect.x -= self.speed

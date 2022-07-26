@@ -4,6 +4,7 @@ from random import randint
 from bird import Bird
 from shoot import Shoot
 from ball import Balle
+from rebond import Rebond
 
 '''Initialisation'''
 pygame.init()
@@ -45,15 +46,36 @@ len_bird_death = 0
 shoot = Shoot()
 balle = Balle()
 
-'''Manage Level'''
+'''Creation levels'''
 tab_bird_1 = []
-tab_bird_1.append(Bird(400, 168))
-tab_bird_1.append(Bird(400, 298))
+tab_bird_1.append(Bird(400, 168, "None", False, 0, 0))
 tab_bird_now = tab_bird_1
 tab_bird_2 = []
-tab_bird_2.append(Bird(400, 130))
-tab_bird_2.append(Bird(400, 168))
-tab_bird_2.append(Bird(400, 298))
+tab_bird_2.append(Bird(400, 40, "left", True, 70, 735))
+tab_bird_2.append(Bird(400, 168, "right", True, 70, 735))
+tab_bird_3 = []
+tab_bird_3.append(Bird(600, 296, "None", False, 0, 0))
+tab_bird_3.append(Bird(400, 40, "None", False, 70, 300))
+tab_bird_3.append(Rebond(600, 90))
+tab_bird_4 = []
+tab_bird_4.append(Bird(600, 296, "None", False, 0, 0))
+tab_bird_4.append(Bird(400, 40, "left", True, 70, 300))
+tab_bird_4.append(Bird(400, 168, "left", True, 70, 300))
+tab_bird_4.append(Rebond(600, 90))
+tab_bird_5 = []
+tab_bird_5.append(Bird(275, 168, "left", True, 70, 275))
+tab_bird_5.append(Bird(270, 168, "right", True, 270, 550))
+tab_bird_5.append(Bird(735, 168, "left", True, 550, 735))
+tab_bird_5.append(Bird(70, 296, "right", True, 70, 275))
+tab_bird_5.append(Bird(550, 296, "left", True, 270, 550))
+tab_bird_5.append(Bird(550, 296, "right", True, 550, 735))
+tab_bird_5.append(Rebond(650, 90))
+tab_bird_5.append(Rebond(150, 90))
+tab_bird_6 = []
+tab_bird_7 = []
+tab_bird_8 = []
+tab_bird_9 = []
+tab_bird_10 = []
 
 '''Creation fond jeu'''
 barriere_left = pygame.image.load("assets/game/cloture.png")
@@ -71,11 +93,19 @@ cadre_left = pygame.transform.scale(cadre_left, (180, 60))
 cadre_right = pygame.image.load("assets/game/cadre_inf.png")
 cadre_right = pygame.transform.scale(cadre_right, (180, 60))
 
+def calcul_len_bird(tab):
+    len = 0
+    for elt in tab:
+        if elt.type == "bird":
+            len += 1
+    return len
+
 '''Boucle jeu'''
 running = True
 while running:
 
     '''Actualisation'''
+    pressed = pygame.key.get_pressed()
     text_shots_number = myfont_number.render(str(int(SHOT)), True, (0, 0, 0))
     text_level_number = myfont_number.render(str(int(LEVEL)), True, (0, 0, 0))
 
@@ -97,14 +127,13 @@ while running:
                 clignotement = True
 
     '''Games Engine'''
-    pressed = pygame.key.get_pressed()
     #Game
     if STAT == "game":
         if shoot.can_shoot == True:
-            if pressed[pygame.K_d]:
+            if pressed[pygame.K_d] and shoot.rect.x <= 756:
                 shoot.move_right()
                 balle.rect.x += shoot.speed
-            if pressed[pygame.K_q]:
+            if pressed[pygame.K_q] and shoot.rect.x >= 0:
                 shoot.move_left()
                 balle.rect.x -= shoot.speed
         if shoot.can_shoot == True:
@@ -112,13 +141,38 @@ while running:
                 balle.move = True
                 shoot.can_shoot = False
                 SHOT += 1
+                balle.direction = "UP"
         #Déplacement balle
         if balle.move == True:
-            balle.move_up()
+            if balle.direction == "UP":
+                balle.move_up()
+            if balle.direction == "DOWN":
+                balle.move_down()
         #Collision balle
         for bird in tab_bird_now:
-            if pygame.Rect.colliderect(balle.rect, bird.rect):
-                bird.alive = False
+            if bird.type == "bird":
+                if pygame.Rect.colliderect(balle.rect, bird.rect):
+                    bird.alive = False
+        #Déplacement birds
+        for bird in tab_bird_now:
+            if bird.type == "bird":
+                if bird.move == True:
+                    if bird.direction == "left":
+                        bird.move_left()
+                    if bird.direction == "right":
+                        bird.move_right()
+                    if bird.rect.x <= bird.limit_left:
+                        bird.direction = "right"
+                    if bird.rect.x >= bird.limit_right:
+                        bird.direction = "left"
+        #Manage rebond
+        for bird in tab_bird_now:
+            if bird.type == "rebond":
+                if pygame.Rect.colliderect(bird.rect, balle.rect):
+                    balle.direction = "DOWN"
+        if balle.direction == "DOWN" and balle.rect.y >= 510:
+            shoot.can_shoot = True
+            balle.direction = "NONE"
 
     '''Affichage'''
     screen.blit(screen, (0, 0))
@@ -132,8 +186,9 @@ while running:
         screen.fill((107, 194, 218))
         screen.blit(grass, (-100, 555))
         for bird in tab_bird_now:
-            if bird.alive == True:
-                screen.blit(bird.image, bird.rect)
+            if bird.type == "bird":
+                if bird.alive == True:
+                    screen.blit(bird.image, bird.rect)
         screen.blit(barriere_left, (-68, 20))
         screen.blit(barriere_right, (680, 20))
         screen.blit(shoot.image, shoot.rect)
@@ -148,10 +203,14 @@ while running:
         screen.blit(text_level_number, (780, 597))
         screen.blit(balle.image, balle.rect)
         for bird in tab_bird_now:
-            if bird.alive == False:
-                len_bird_death += 1
+            if bird.type == "rebond":
+                screen.blit(bird.image, bird.rect)
+        for bird in tab_bird_now:
+            if bird.type == "bird":
+                if bird.alive == False:
+                    len_bird_death += 1
         #Si on passe au niveau suivant
-        if len_bird_death == len(tab_bird_now):
+        if len_bird_death == calcul_len_bird(tab_bird_now):
             LEVEL += 1
             shoot.rect.x = 375
             shoot.rect.y = 520
@@ -160,7 +219,24 @@ while running:
             balle.rect.x = 400
             balle.rect.y = 510
             for bird in tab_bird_now:
-                bird.alive = True
+                if bird.type == "bird":
+                    bird.alive = True
+            if tab_bird_now == tab_bird_9:
+                tab_bird_now = tab_bird_10
+            if tab_bird_now == tab_bird_8:
+                tab_bird_now = tab_bird_9
+            if tab_bird_now == tab_bird_7:
+                tab_bird_now = tab_bird_8
+            if tab_bird_now == tab_bird_6:
+                tab_bird_now = tab_bird_7
+            if tab_bird_now == tab_bird_5:
+                tab_bird_now = tab_bird_6
+            if tab_bird_now == tab_bird_4:
+                tab_bird_now = tab_bird_5
+            if tab_bird_now == tab_bird_3:
+                tab_bird_now = tab_bird_4
+            if tab_bird_now == tab_bird_2:
+                tab_bird_now = tab_bird_3
             if tab_bird_now == tab_bird_1:
                 tab_bird_now = tab_bird_2
         len_bird_death = 0
@@ -173,7 +249,14 @@ while running:
             balle.rect.x = 400
             balle.rect.y = 510
             for bird in tab_bird_now:
-                bird.alive = True
+                if bird.type == "bird":
+                    bird.alive = True
+        #Fin du jeux (réussie level 10)
+        if LEVEL == 11:
+            STAT = "menu"
+            LEVEL = 0
+            SHOT = 0
+            tab_bird_now = tab_bird_1
 
     pygame.display.flip()
     clock.tick(60)
