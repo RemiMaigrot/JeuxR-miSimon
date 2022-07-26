@@ -5,6 +5,7 @@ from bird import Bird
 from shoot import Shoot
 from ball import Balle
 from rebond import Rebond
+from electric import Electric
 
 '''Initialisation'''
 pygame.init()
@@ -22,7 +23,7 @@ SHOT = 0
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("JeuxVacances")
 
-'''Imtages'''
+'''Images'''
 #Menu
 bg_menu = pygame.image.load("assets/menu/menu.png")
 bg_menu = pygame.transform.scale(bg_menu, (WIDTH, HEIGHT))
@@ -49,7 +50,6 @@ balle = Balle()
 '''Creation levels'''
 tab_bird_1 = []
 tab_bird_1.append(Bird(400, 168, "None", False, 0, 0))
-tab_bird_now = tab_bird_1
 tab_bird_2 = []
 tab_bird_2.append(Bird(400, 40, "left", True, 70, 735))
 tab_bird_2.append(Bird(400, 168, "right", True, 70, 735))
@@ -72,10 +72,24 @@ tab_bird_5.append(Bird(550, 296, "right", True, 550, 735))
 tab_bird_5.append(Rebond(650, 90))
 tab_bird_5.append(Rebond(150, 90))
 tab_bird_6 = []
+tab_bird_6.append(Bird(400, 40, "none", False, 0, 0))
+tab_bird_6.append(Electric(420, 247, "right", 330, 500))
 tab_bird_7 = []
+tab_bird_7.append(Bird(400, 40, "right", True, 230, 600))
+tab_bird_7.append(Electric(350, 247, "right", 200, 550))
+tab_bird_7.append(Electric(450, 247, "right", 300, 650))
 tab_bird_8 = []
+tab_bird_8.append(Bird(390, 168, "right", True, 230, 580))
+tab_bird_8.append(Electric(350, 380, "right", 200, 550))
+tab_bird_8.append(Electric(400, 380, "right", 250, 600))
+tab_bird_8.append(Electric(450, 380, "right", 300, 650))
+
+tab_bird_8.append(Electric(300, 380, "right", 150, 500))
+tab_bird_8.append(Electric(500, 380, "right", 350, 700))
+tab_bird_8.append(Rebond(400, 90))
 tab_bird_9 = []
 tab_bird_10 = []
+tab_bird_now = tab_bird_1
 
 '''Creation fond jeu'''
 barriere_left = pygame.image.load("assets/game/cloture.png")
@@ -173,6 +187,17 @@ while running:
         if balle.direction == "DOWN" and balle.rect.y >= 510:
             shoot.can_shoot = True
             balle.direction = "NONE"
+        #Manage elctric
+        for bird in tab_bird_now:
+            if bird.type == "electric":
+                if bird.direction == "left":
+                    bird.move_left()
+                if bird.direction == "right":
+                    bird.move_right()
+                if bird.rect.x >= bird.limit_right:
+                    bird.direction = "left"
+                if bird.rect.x <= bird.limit_left:
+                    bird.direction = "right"
 
     '''Affichage'''
     screen.blit(screen, (0, 0))
@@ -204,6 +229,9 @@ while running:
         screen.blit(balle.image, balle.rect)
         for bird in tab_bird_now:
             if bird.type == "rebond":
+                screen.blit(bird.image, bird.rect)
+        for bird in tab_bird_now:
+            if bird.type == "electric":
                 screen.blit(bird.image, bird.rect)
         for bird in tab_bird_now:
             if bird.type == "bird":
@@ -251,6 +279,19 @@ while running:
             for bird in tab_bird_now:
                 if bird.type == "bird":
                     bird.alive = True
+        #Actualisation si touche electric
+        for bird in tab_bird_now:
+            if bird.type == "electric":
+                if pygame.Rect.colliderect(balle.rect, bird.rect):
+                    shoot.rect.x = 375
+                    shoot.rect.y = 520
+                    shoot.can_shoot = True
+                    balle.move = False
+                    balle.rect.x = 400
+                    balle.rect.y = 510
+                    for bird in tab_bird_now:
+                        if bird.type == "bird":
+                            bird.alive = True
         #Fin du jeux (réussie level 10)
         if LEVEL == 11:
             STAT = "menu"
