@@ -274,7 +274,7 @@ while running:
         #Fin du jeux (réussie level 10)
         if LEVEL == 11:
             STAT = "menu"
-            LEVEL = 0
+            LEVEL = 1
             SHOT = 0
             tab_bird_now = tab_bird_1
 
