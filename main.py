@@ -73,22 +73,39 @@ tab_bird_5.append(Rebond(650, 90))
 tab_bird_5.append(Rebond(150, 90))
 tab_bird_6 = []
 tab_bird_6.append(Bird(400, 40, "none", False, 0, 0))
-tab_bird_6.append(Electric(420, 247, "right", 330, 500))
+tab_bird_6.append(Electric(420, 247, "right", 330, 500, 3))
 tab_bird_7 = []
 tab_bird_7.append(Bird(400, 40, "right", True, 230, 600))
-tab_bird_7.append(Electric(350, 247, "right", 200, 550))
-tab_bird_7.append(Electric(450, 247, "right", 300, 650))
+tab_bird_7.append(Electric(350, 247, "right", 200, 550, 3))
+tab_bird_7.append(Electric(450, 247, "right", 300, 650, 3))
 tab_bird_8 = []
 tab_bird_8.append(Bird(390, 168, "right", True, 230, 580))
-tab_bird_8.append(Electric(350, 380, "right", 200, 550))
-tab_bird_8.append(Electric(400, 380, "right", 250, 600))
-tab_bird_8.append(Electric(450, 380, "right", 300, 650))
-
-tab_bird_8.append(Electric(300, 380, "right", 150, 500))
-tab_bird_8.append(Electric(500, 380, "right", 350, 700))
+tab_bird_8.append(Electric(350, 380, "right", 200, 550, 2))
+tab_bird_8.append(Electric(400, 380, "right", 250, 600, 2))
+tab_bird_8.append(Electric(450, 380, "right", 300, 650, 2))
+tab_bird_8.append(Electric(300, 380, "right", 150, 500, 2))
+tab_bird_8.append(Electric(500, 380, "right", 350, 700, 2))
 tab_bird_8.append(Rebond(400, 90))
 tab_bird_9 = []
+tab_bird_9.append(Bird(130, 168, "None", False, 0, 0))
+tab_bird_9.append(Bird(230, 168, "None", False, 0, 0))
+tab_bird_9.append(Bird(570, 168, "None", False, 0, 0))
+tab_bird_9.append(Bird(670, 168, "None", False, 0, 0))
+tab_bird_9.append(Bird(400, 40, "None", False, 0, 0))
+tab_bird_9.append(Rebond(130, 90))
+tab_bird_9.append(Rebond(230, 90))
+tab_bird_9.append(Rebond(570, 90))
+tab_bird_9.append(Rebond(670, 90))
+tab_bird_9.append(Electric(130, 380, "right", 110, 290, 2))
+tab_bird_9.append(Electric(730, 380, "left", 550, 730, 2))
 tab_bird_10 = []
+tab_bird_10.append(Bird(230, 168, "right", True, 230, 600))
+tab_bird_10.append(Bird(600, 296, "left", True, 230, 600))
+tab_bird_10.append(Bird(600, 40, "left", True, 230, 600))
+tab_bird_10.append(Rebond(120, 90))
+tab_bird_10.append(Rebond(690, 220))
+tab_bird_10.append(Bird(125, 168, "None", False, 0, 0))
+tab_bird_10.append(Bird(695, 296, "None", False, 0, 0))
 tab_bird_now = tab_bird_1
 
 '''Creation fond jeu'''
@@ -107,6 +124,7 @@ cadre_left = pygame.transform.scale(cadre_left, (180, 60))
 cadre_right = pygame.image.load("assets/game/cadre_inf.png")
 cadre_right = pygame.transform.scale(cadre_right, (180, 60))
 
+'''Fonction'''
 def calcul_len_bird(tab):
     len = 0
     for elt in tab:
@@ -198,45 +216,6 @@ while running:
                     bird.direction = "left"
                 if bird.rect.x <= bird.limit_left:
                     bird.direction = "right"
-
-    '''Affichage'''
-    screen.blit(screen, (0, 0))
-    #Menu
-    if STAT == "menu":
-        screen.blit(bg_menu, (0, 0))
-        if clignotement == True:
-            screen.blit(play_text, (300, 300))
-    #Game
-    if STAT == "game":
-        screen.fill((107, 194, 218))
-        screen.blit(grass, (-100, 555))
-        for bird in tab_bird_now:
-            if bird.type == "bird":
-                if bird.alive == True:
-                    screen.blit(bird.image, bird.rect)
-        screen.blit(barriere_left, (-68, 20))
-        screen.blit(barriere_right, (680, 20))
-        screen.blit(shoot.image, shoot.rect)
-        screen.blit(fil, (70, 120))
-        screen.blit(fil2, (70, 250))
-        screen.blit(fil3, (70, 380))
-        screen.blit(cadre_left, (20, 580))
-        screen.blit(cadre_right, (649, 580))
-        screen.blit(text_shots, (34, 600))
-        screen.blit(text_shots_number, (150, 597))
-        screen.blit(text_level, (667, 600))
-        screen.blit(text_level_number, (780, 597))
-        screen.blit(balle.image, balle.rect)
-        for bird in tab_bird_now:
-            if bird.type == "rebond":
-                screen.blit(bird.image, bird.rect)
-        for bird in tab_bird_now:
-            if bird.type == "electric":
-                screen.blit(bird.image, bird.rect)
-        for bird in tab_bird_now:
-            if bird.type == "bird":
-                if bird.alive == False:
-                    len_bird_death += 1
         #Si on passe au niveau suivant
         if len_bird_death == calcul_len_bird(tab_bird_now):
             LEVEL += 1
@@ -298,6 +277,45 @@ while running:
             LEVEL = 0
             SHOT = 0
             tab_bird_now = tab_bird_1
+
+    '''Affichage'''
+    screen.blit(screen, (0, 0))
+    #Menu
+    if STAT == "menu":
+        screen.blit(bg_menu, (0, 0))
+        if clignotement == True:
+            screen.blit(play_text, (300, 300))
+    #Game
+    if STAT == "game":
+        screen.fill((107, 194, 218))
+        screen.blit(grass, (-100, 555))
+        screen.blit(barriere_left, (-68, 20))
+        screen.blit(barriere_right, (680, 20))
+        for bird in tab_bird_now:
+            if bird.type == "bird":
+                if bird.alive == True:
+                    screen.blit(bird.image, bird.rect)
+        screen.blit(shoot.image, shoot.rect)
+        screen.blit(fil, (70, 120))
+        screen.blit(fil2, (70, 250))
+        screen.blit(fil3, (70, 380))
+        screen.blit(cadre_left, (20, 580))
+        screen.blit(cadre_right, (649, 580))
+        screen.blit(text_shots, (34, 600))
+        screen.blit(text_shots_number, (150, 597))
+        screen.blit(text_level, (667, 600))
+        screen.blit(text_level_number, (780, 597))
+        screen.blit(balle.image, balle.rect)
+        for bird in tab_bird_now:
+            if bird.type == "rebond":
+                screen.blit(bird.image, bird.rect)
+        for bird in tab_bird_now:
+            if bird.type == "electric":
+                screen.blit(bird.image, bird.rect)
+        for bird in tab_bird_now:
+            if bird.type == "bird":
+                if bird.alive == False:
+                    len_bird_death += 1
 
     pygame.display.flip()
     clock.tick(60)

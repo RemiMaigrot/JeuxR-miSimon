@@ -1,7 +1,7 @@
 import pygame
 
 class Electric(pygame.sprite.Sprite):
-    def __init__(self, x, y, direction, limit_left, limit_right):
+    def __init__(self, x, y, direction, limit_left, limit_right, speed):
         self.image = pygame.image.load("assets/game/electric.png")
         self.image = pygame.transform.scale(self.image, (20, 20))
         self.rect = self.image.get_rect()
@@ -11,7 +11,7 @@ class Electric(pygame.sprite.Sprite):
         self.direction = direction
         self.limit_left = limit_left
         self.limit_right = limit_right
-        self.speed = 3
+        self.speed = speed
 
     def move_left(self):
         self.rect.x -= self.speed
